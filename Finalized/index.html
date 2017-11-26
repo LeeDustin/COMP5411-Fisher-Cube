@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Fisher Cube</title>
+  <link href='http://fonts.googleapis.com/css?family=Alegreya+Sans+SC' rel='stylesheet' type='text/css'>
+  <link href="style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <ul id="controls">
+    <li><a href="#shuffle" id="button-shuffle">Shuffle</a></li>
+    <li><a href="#solve" id="button-solve">Solve</a></li>
+    <li><a href="#undo" id="button-undo">Undo</a></li>
+    <li><a href="#reset" id="button-reset">Reset</a></li>
+  </ul>
+  <div id="scene"></div>
+
+  <p id="info">
+    Rubik Cube built with <a href="http://threejs.org">Three.js</a> by <a href="https://github.com/jwhitfieldseed ">Joe Whitfield-Seed </a> 2013.        
+	Extended to Fisher Cube by Dustin and Calvin for COMP5411 project (2017 Fall).    </p>
+
+  <script src="lib/jquery-2.0.3.js"></script>
+  <script src="lib/three.js"></script>
+  <script src="lib/OrbitControls.js"></script>
+  <script src='lib/threex.domevent.js'></script>
+  <script src='lib/threex.domevent.object3d.js'></script>
+
+  <script src="rubik.js"></script>
+  <script>
+    $(function() {
+      function init() {
+        dimensions = 3;
+        var element = $("#scene").empty();
+        var fisher = new Fisher(element, dimensions);
+
+        $("#button-shuffle").on('click', function(e) { e.preventDefault(); fisher.shuffle() });
+        $("#button-solve").on('click', function(e) { e.preventDefault(); fisher.solve(); });
+        $("#button-undo").on('click', function(e) { e.preventDefault(); fisher.undo(); });
+        $("#button-reset").on('click', function(e) { e.preventDefault(); init(); });        
+      };
+
+      init();
+
+      
+    });
+
+  </script>
+
+</body>
+
+</html>
