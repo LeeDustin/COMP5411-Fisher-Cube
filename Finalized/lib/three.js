@@ -37083,7 +37083,7 @@ THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSeg
 				scope.vertices.push( vector );				
 			}
 		}
-		// Above Part is Extended from origianl source code
+		// Above Part is Extended from original source code
 		
 		for ( iy = 0; iy < gridY; iy++ ) {
 
@@ -37094,7 +37094,7 @@ THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSeg
 				var c = ( ix + 1 ) + gridX1 * ( iy + 1 );
 				var d = ( ix + 1 ) + gridX1 * iy;
 				
-				// Below Part Extended from origianl source code
+				// Below Part Extended from original source code
 				var face = new THREE.Face3( a + offset, b + offset, d + offset );
 				face.materialIndex = materialIndex;
 				var c1 = !((materialIndex == 1 || materialIndex == 5 || materialIndex == 2 || materialIndex == 3 )&& i_th == 0 && j_th == 0);
@@ -37248,7 +37248,7 @@ THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSeg
 						scope.faces.push( face );		
 					}
 				}
-				// Above Part Extended from origianl source code
+				// Above Part Extended from original source code
 			}
 
 		}
