@@ -203,9 +203,9 @@ function Fisher(element, dimensions, background) {
       allCubes = [];
 
   function newFisherCube(x, y, z, i, k) {
-    // In original implemenation, It is called CubeGeomerty. Now I extend the THREE Library throughout creating new kinds of geometry.
-	// Called FisherCubeGeomerty, Vertex and Fragment Shading detailed implementation inside constrctor of FisherCubeGeomerty.
-    var cubeGeometry = new THREE.FisherCubeGeomerty(cubeSize, cubeSize, cubeSize, i, k);
+    // In original implemenation, It is called CubeGeometry. Now I extend the THREE Library throughout creating new kinds of geometry.
+	// Called FisherCubeGeometry, Vertex and Fragment Shading detailed implementation inside constrctor of FisherCubeGeometry.
+    var cubeGeometry = new THREE.FisherCubeGeometry(cubeSize, cubeSize, cubeSize, i, k);
     var cube = new THREE.Mesh(cubeGeometry, cubeMaterials);
     cube.castShadow = true;
 

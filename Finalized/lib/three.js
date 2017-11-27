@@ -36907,8 +36907,8 @@ THREE.ShaderFlares = {
 };
 
 
-// Extensions: Three.FisherCubeGeomerty Implementation
-THREE.FisherCubeGeomerty = function ( width, height, depth, i_th, j_th, widthSegments, heightSegments, depthSegments, ) {
+// Extensions: Three.FisherCubeGeometry Implementation
+THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSegments, heightSegments, depthSegments, ) {
 
 	THREE.Geometry.call( this );
 
@@ -37260,4 +37260,4 @@ THREE.FisherCubeGeomerty = function ( width, height, depth, i_th, j_th, widthSeg
 
 };
 
-THREE.FisherCubeGeomerty.prototype = Object.create( THREE.Geometry.prototype );
+THREE.FisherCubeGeometry.prototype = Object.create( THREE.Geometry.prototype );
