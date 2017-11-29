@@ -16,6 +16,14 @@
     <li><a href="#solve" id="button-solve">Solve</a></li>
     <li><a href="#undo" id="button-undo">Undo</a></li>
     <li><a href="#reset" id="button-reset">Reset</a></li>
+	 <li>
+      <label>Size</label>
+      <select id="select-size">
+        <option value="3">3x3</option>
+		<option value="4">4x4</option>
+        <!-- we can go bigger but it gets unwieldy! -->
+      </select>
+    </li>
   </ul>
   <div id="scene"></div>
 
@@ -32,15 +40,16 @@
   <script src="rubik.js"></script>
   <script>
     $(function() {
-      function init() {
-        dimensions = 3;
+      function init(dimensions) {
+        dimensions = +(dimensions) || 3;
         var element = $("#scene").empty();
         var fisher = new Fisher(element, dimensions);
 
         $("#button-shuffle").on('click', function(e) { e.preventDefault(); fisher.shuffle() });
         $("#button-solve").on('click', function(e) { e.preventDefault(); fisher.solve(); });
         $("#button-undo").on('click', function(e) { e.preventDefault(); fisher.undo(); });
-        $("#button-reset").on('click', function(e) { e.preventDefault(); init(); });        
+        $("#button-reset").on('click', function(e) { e.preventDefault(); init($("#select-size").val()); });     
+		$("#select-size").on('change', function() { init($(this).val()) }); 
       };
 
       init();

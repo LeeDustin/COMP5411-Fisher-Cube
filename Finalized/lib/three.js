@@ -36907,8 +36907,8 @@ THREE.ShaderFlares = {
 };
 
 
-// Extensions: Three.FisherCubeGeometry Implementation
-THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSegments, heightSegments, depthSegments, ) {
+// Extensions: Three.FisherCubeGeomerty Implementation
+THREE.FisherCubeGeomerty = function ( width, height, depth, i_th, j_th, dimensions, widthSegments, heightSegments, depthSegments, ) {
 
 	THREE.Geometry.call( this );
 
@@ -36926,14 +36926,14 @@ THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSeg
 	var height_half = this.height / 2;
 	var depth_half = this.depth / 2;
 
-	buildPlane( 'z', 'y', - 1, - 1, this.depth, this.height, width_half, 0 , i_th, j_th); // px
-	buildPlane( 'z', 'y',   1, - 1, this.depth, this.height, - width_half, 1 , i_th, j_th); // nx
-	buildPlane( 'x', 'z',   1,   1, this.width, this.depth, height_half, 2 , i_th, j_th); // py
-	buildPlane( 'x', 'z',   1, - 1, this.width, this.depth, - height_half, 3 , i_th, j_th); // ny
-	buildPlane( 'x', 'y',   1, - 1, this.width, this.height, depth_half, 4 , i_th, j_th); // pz
-	buildPlane( 'x', 'y', - 1, - 1, this.width, this.height, - depth_half, 5 , i_th, j_th); // nz
+	buildPlane( 'z', 'y', - 1, - 1, this.depth, this.height, width_half, 0 , i_th, j_th, dimensions); // px
+	buildPlane( 'z', 'y',   1, - 1, this.depth, this.height, - width_half, 1 , i_th, j_th, dimensions); // nx
+	buildPlane( 'x', 'z',   1,   1, this.width, this.depth, height_half, 2 , i_th, j_th, dimensions); // py
+	buildPlane( 'x', 'z',   1, - 1, this.width, this.depth, - height_half, 3 , i_th, j_th, dimensions); // ny
+	buildPlane( 'x', 'y',   1, - 1, this.width, this.height, depth_half, 4 , i_th, j_th, dimensions); // pz
+	buildPlane( 'x', 'y', - 1, - 1, this.width, this.height, - depth_half, 5 , i_th, j_th, dimensions); // nz
 
-	function buildPlane( u, v, udir, vdir, width, height, depth, materialIndex , i_th, j_th) {
+	function buildPlane( u, v, udir, vdir, width, height, depth, materialIndex , i_th, j_th, dimensions) {
 
 		var w, ix, iy,
 		gridX = scope.widthSegments,
@@ -36980,107 +36980,259 @@ THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSeg
 
 		}
 		// Below part is extended from original source code.
-		if ((materialIndex == 2 || materialIndex == 3)&&(i_th == 1||j_th == 1)){
-			var vector = new THREE.Vector3();
-			if (i_th == 1 && j_th == 0){
-				vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
-				vector[ v ] =  - width_half  * udir - (width_half * Math.tan(Math.PI / 4));
+		if (materialIndex == 2 || materialIndex == 3){
+			if ((dimensions == 3)&&(i_th == 1||j_th == 1)){
+				var vector = new THREE.Vector3();
+				if (i_th == 1 && j_th == 0){
+					vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
+					vector[ v ] =  - width_half  * udir - (width_half * Math.tan(Math.PI / 4));
+				}
+				else if (i_th == 1 && j_th == 2){
+					vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
+					vector[ v ] =  ( segment_width - width_half ) * udir + (width_half * Math.tan(Math.PI / 4));
+				}
+				else if (i_th == 2 && j_th == 1){
+					vector[ u ] =  ( segment_height - height_half ) * Math.abs(vdir) + (height_half * Math.tan(Math.PI / 4));
+					vector[ v ] = ( segment_width - 2 * width_half ) * udir / 2;
+				}
+				else if (i_th == 0 && j_th == 1){
+					vector[ u ] =  - height_half  * Math.abs(vdir) - (height_half * Math.tan(Math.PI / 4));
+					vector[ v ] = ( segment_width - 2 * width_half ) * udir / 2;
+				}
+				vector[ w ] = depth;
+				scope.vertices.push( vector );	
 			}
-			else if (i_th == 1 && j_th == 2){
-				vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
-				vector[ v ] =  ( segment_width - width_half ) * udir + (width_half * Math.tan(Math.PI / 4));
+			else if ((dimensions == 4)&&(i_th == 1||j_th == 1||i_th == 2||j_th == 2)){
+				var vector = new THREE.Vector3();
+				if ((i_th == 1 || i_th == 2) && j_th == 0){
+					if (i_th == 1)
+						vector[ u ] = ( segment_height - height_half ) * Math.abs(vdir);
+					else
+						vector[ u ] =  - height_half * Math.abs(vdir);
+					vector[ v ] =  - width_half  * udir - width;
+				}
+				else if ((i_th == 1 || i_th == 2) && j_th == 3){
+					if (i_th == 1)
+						vector[ u ] = ( segment_height - height_half ) * Math.abs(vdir);
+					else
+						vector[ u ] =  - height_half * Math.abs(vdir);
+					vector[ v ] =  ( segment_width - width_half ) * udir + width;
+				}
+				else if (i_th == 3 && (j_th == 1 || j_th == 2)){
+					vector[ u ] =  ( segment_height - height_half ) * Math.abs(vdir) + height;
+					if (j_th == 1)
+						vector[ v ] = ( segment_width - width_half ) * Math.abs(udir);
+					else
+						vector[ v ] =  - width_half * Math.abs(udir);
+				}
+				else if (i_th == 0 && (j_th == 1 || j_th == 2)){
+					vector[ u ] =  - height_half  * Math.abs(vdir) - height;
+					if (j_th == 1)
+						vector[ v ] = ( segment_width - width_half ) * Math.abs(udir);
+					else
+						vector[ v ] =  - width_half * Math.abs(udir);
+				}
+				vector[ w ] = depth;
+				scope.vertices.push( vector );	
 			}
-			else if (i_th == 2 && j_th == 1){
-				vector[ u ] =  ( segment_height - height_half ) * Math.abs(vdir) + (height_half * Math.tan(Math.PI / 4));
-				vector[ v ] = ( segment_width - 2 * width_half ) * udir / 2;
-			}
-			else if (i_th == 0 && j_th == 1){
-				vector[ u ] =  - height_half  * Math.abs(vdir) - (height_half * Math.tan(Math.PI / 4));
-				vector[ v ] = ( segment_width - 2 * width_half ) * udir / 2;
-			}
-			vector[ w ] = depth;
-			scope.vertices.push( vector );		
 		}
+
 		if (materialIndex == 2){
-			if ((i_th == 0 && j_th == 0)||(i_th == 2 && j_th == 2)){
-				var vector = new THREE.Vector3();
-				vector[ u ] = ( segment_width - width_half ) * udir;
-				vector[ v ] = - height_half  * vdir;
-				vector[ w ] = - depth;
-				scope.vertices.push( vector );	
-				var vector = new THREE.Vector3();
-				vector[ u ] = - width_half  * udir;
-				vector[ v ] = ( segment_height - height_half ) * vdir;
-				vector[ w ] = - depth;
-				scope.vertices.push( vector );	
+			if (dimensions == 3){
+				if ((i_th == 0 && j_th == 0)||(i_th == 2 && j_th == 2)){
+					var vector = new THREE.Vector3();
+					vector[ u ] = ( segment_width - width_half ) * udir;
+					vector[ v ] = - height_half  * vdir;
+					vector[ w ] = - depth;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ u ] = - width_half  * udir;
+					vector[ v ] = ( segment_height - height_half ) * vdir;
+					vector[ w ] = - depth;
+					scope.vertices.push( vector );	
+				}
+				else if ((i_th == 0 && j_th == 2)||(i_th == 2 && j_th == 0)){
+					var vector = new THREE.Vector3();
+					vector[ u ] = - width_half * udir;
+					vector[ v ] = - height_half * vdir;
+					vector[ w ] = - depth;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ u ] = ( segment_width - width_half ) * udir;
+					vector[ v ] = ( segment_height - height_half ) * vdir;
+					vector[ w ] = - depth;
+					scope.vertices.push( vector );	
+				}
 			}
-			else if ((i_th == 0 && j_th == 2)||(i_th == 2 && j_th == 0)){
-				var vector = new THREE.Vector3();
-				vector[ u ] = - width_half * udir;
-				vector[ v ] = - height_half * vdir;
-				vector[ w ] = - depth;
-				scope.vertices.push( vector );	
-				var vector = new THREE.Vector3();
-				vector[ u ] = ( segment_width - width_half ) * udir;
-				vector[ v ] = ( segment_height - height_half ) * vdir;
-				vector[ w ] = - depth;
-				scope.vertices.push( vector );	
+			else {
+				if ((i_th == 0 && j_th == 0)||(i_th == 3 && j_th == 3)){
+					var vector = new THREE.Vector3();
+					vector[ u ] = ( segment_width - width_half ) * udir;
+					vector[ v ] = - height_half  * vdir;
+					vector[ w ] = - depth;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ u ] = - width_half  * udir;
+					vector[ v ] = ( segment_height - height_half ) * vdir;
+					vector[ w ] = - depth;
+					scope.vertices.push( vector );	
+				}
+				else if ((i_th == 0 && j_th == 3)||(i_th == 3 && j_th == 0)){
+					var vector = new THREE.Vector3();
+					vector[ u ] = - width_half * udir;
+					vector[ v ] = - height_half * vdir;
+					vector[ w ] = - depth;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ u ] = ( segment_width - width_half ) * udir;
+					vector[ v ] = ( segment_height - height_half ) * vdir;
+					vector[ w ] = - depth;
+					scope.vertices.push( vector );	
+				}
 			}
 		}
 		if (materialIndex == 5){
-			if (i_th == 1 && j_th == 0){
-				var vector = new THREE.Vector3();
-				vector[ w ] = - width_half  * Math.abs(udir) - (width_half * Math.tan(Math.PI / 4));
-				vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
-				vector[ v ] =  height_half;
-				scope.vertices.push( vector );	
-				var vector = new THREE.Vector3();
-				vector[ w ] = - width_half  * Math.abs(udir) - (width_half * Math.tan(Math.PI / 4));
-				vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
-				vector[ v ] =  - height_half;
-				scope.vertices.push( vector );				
+			if (dimensions == 3){
+				if (i_th == 1 && j_th == 0){
+					var vector = new THREE.Vector3();
+					vector[ w ] = - width_half  * Math.abs(udir) - (width_half * Math.tan(Math.PI / 4));
+					vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
+					vector[ v ] =  height_half;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ w ] = - width_half  * Math.abs(udir) - (width_half * Math.tan(Math.PI / 4));
+					vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
+					vector[ v ] =  - height_half;
+					scope.vertices.push( vector );				
+				}
+			}
+			else {
+				if ((i_th == 1 || i_th == 2)&& j_th == 0){
+					var vector = new THREE.Vector3();
+					vector[ w ] = - width_half  * Math.abs(udir) - width;
+					if (i_th == 1)
+						vector[ u ] = ( segment_height - height_half ) * Math.abs(vdir);
+					else
+						vector[ u ] =  - height_half  * Math.abs(vdir);
+					vector[ v ] =  height_half;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ w ] = - width_half  * Math.abs(udir) - width;
+					if (i_th == 1)
+						vector[ u ] = ( segment_height - height_half ) * Math.abs(vdir);
+					else
+						vector[ u ] =  - height_half  * Math.abs(vdir);
+					vector[ v ] =  - height_half;
+					scope.vertices.push( vector );				
+				}
 			}
 		}
 		if (materialIndex == 4){
-			if (i_th == 1 && j_th == 2){
-				var vector = new THREE.Vector3();
-				vector[ w ] = ( segment_width - width_half ) * Math.abs(udir) + (width_half * Math.tan(Math.PI / 4));
-				vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
-				vector[ v ] =  height_half;
-				scope.vertices.push( vector );	
-				var vector = new THREE.Vector3();
-				vector[ w ] = ( segment_width - width_half ) * Math.abs(udir) + (width_half * Math.tan(Math.PI / 4));
-				vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
-				vector[ v ] =  - height_half;
-				scope.vertices.push( vector );				
+			if (dimensions == 3){
+				if (i_th == 1 && j_th == 2){
+					var vector = new THREE.Vector3();
+					vector[ w ] = ( segment_width - width_half ) * Math.abs(udir) + (width_half * Math.tan(Math.PI / 4));
+					vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
+					vector[ v ] =  height_half;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ w ] = ( segment_width - width_half ) * Math.abs(udir) + (width_half * Math.tan(Math.PI / 4));
+					vector[ u ] = ( segment_height - 2 * height_half ) * Math.abs(vdir) / 2;
+					vector[ v ] =  - height_half;
+					scope.vertices.push( vector );				
+				}
+			}
+			else {
+				if ((i_th == 1 || i_th == 2) && j_th == 3){
+					var vector = new THREE.Vector3();
+					vector[ w ] = ( segment_width - width_half ) * Math.abs(udir) + width;
+					if (i_th == 1)
+						vector[ u ] = ( segment_height - height_half ) * Math.abs(vdir);
+					else
+						vector[ u ] =  - height_half  * Math.abs(vdir);
+					vector[ v ] =  height_half;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ w ] = ( segment_width - width_half ) * Math.abs(udir) + width;
+					if (i_th == 1)
+						vector[ u ] = ( segment_height - height_half ) * Math.abs(vdir);
+					else
+						vector[ u ] =  - height_half  * Math.abs(vdir);
+					vector[ v ] =  - height_half;
+					scope.vertices.push( vector );				
+				}
 			}
 		}
 		if (materialIndex == 1){
-			if (i_th == 0 && j_th == 1){
-				var vector = new THREE.Vector3();
-				vector[ w ] = - height_half  * Math.abs(vdir) - (height_half * Math.tan(Math.PI / 4));
-				vector[ u ] = ( segment_width - 2 * width_half ) * Math.abs(udir) / 2;
-				vector[ v ] =  height_half;
-				scope.vertices.push( vector );	
-				var vector = new THREE.Vector3();
-				vector[ w ] = - height_half  * Math.abs(vdir) - (height_half * Math.tan(Math.PI / 4));
-				vector[ u ] = ( segment_width - 2 * width_half ) * Math.abs(udir) / 2;
-				vector[ v ] =  - height_half;
-				scope.vertices.push( vector );				
+			if (dimensions == 3){
+				if (i_th == 0 && j_th == 1){
+					var vector = new THREE.Vector3();
+					vector[ w ] = - height_half  * Math.abs(vdir) - (height_half * Math.tan(Math.PI / 4));
+					vector[ u ] = ( segment_width - 2 * width_half ) * Math.abs(udir) / 2;
+					vector[ v ] =  height_half;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ w ] = - height_half  * Math.abs(vdir) - (height_half * Math.tan(Math.PI / 4));
+					vector[ u ] = ( segment_width - 2 * width_half ) * Math.abs(udir) / 2;
+					vector[ v ] =  - height_half;
+					scope.vertices.push( vector );				
+				}
+			}
+			else {
+				if (i_th == 0 && (j_th == 1 || j_th == 2)){
+					var vector = new THREE.Vector3();
+					vector[ w ] = - height_half  * Math.abs(vdir) - height;
+					if (j_th == 1)
+						vector[ u ] = ( segment_width - width_half ) * Math.abs(udir);
+					else
+						vector[ u ] = - width_half * Math.abs(udir);
+					vector[ v ] =  height_half;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ w ] = - height_half  * Math.abs(vdir) - height;
+					if (j_th == 1)
+						vector[ u ] = ( segment_width - width_half ) * Math.abs(udir);
+					else
+						vector[ u ] = - width_half * Math.abs(udir);
+					vector[ v ] =  - height_half;
+					scope.vertices.push( vector );				
+				}
 			}
 		}
 		if (materialIndex == 0){
-			if (i_th == 2 && j_th == 1){
-				var vector = new THREE.Vector3();
-				vector[ w ] = ( segment_height - height_half ) * Math.abs(vdir) + (height_half * Math.tan(Math.PI / 4));
-				vector[ u ] = ( segment_width - 2 * width_half ) * Math.abs(udir) / 2;
-				vector[ v ] =  height_half;
-				scope.vertices.push( vector );	
-				var vector = new THREE.Vector3();
-				vector[ w ] = ( segment_height - height_half ) * Math.abs(vdir) + (height_half * Math.tan(Math.PI / 4));
-				vector[ u ] = ( segment_width - 2 * width_half ) * Math.abs(udir) / 2;
-				vector[ v ] =  - height_half;
-				scope.vertices.push( vector );				
+			if (dimensions == 3){
+				if (i_th == 2 && j_th == 1){
+					var vector = new THREE.Vector3();
+					vector[ w ] = ( segment_height - height_half ) * Math.abs(vdir) + (height_half * Math.tan(Math.PI / 4));
+					vector[ u ] = ( segment_width - 2 * width_half ) * Math.abs(udir) / 2;
+					vector[ v ] =  height_half;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ w ] = ( segment_height - height_half ) * Math.abs(vdir) + (height_half * Math.tan(Math.PI / 4));
+					vector[ u ] = ( segment_width - 2 * width_half ) * Math.abs(udir) / 2;
+					vector[ v ] =  - height_half;
+					scope.vertices.push( vector );				
+				}
+			}
+			else {
+				if (i_th == 3 && (j_th == 1 || j_th == 2)){
+					var vector = new THREE.Vector3();
+					vector[ w ] = ( segment_height - height_half ) * Math.abs(vdir) + height;
+					if (j_th == 1)
+						vector[ u ] = ( segment_width - width_half ) * Math.abs(udir);
+					else
+						vector[ u ] = - width_half * Math.abs(udir);
+					vector[ v ] =  height_half;
+					scope.vertices.push( vector );	
+					var vector = new THREE.Vector3();
+					vector[ w ] = ( segment_height - height_half ) * Math.abs(vdir) + height;
+					if (j_th == 1)
+						vector[ u ] = ( segment_width - width_half ) * Math.abs(udir);
+					else
+						vector[ u ] = - width_half * Math.abs(udir);
+					vector[ v ] =  - height_half;
+					scope.vertices.push( vector );				
+				}
 			}
 		}
 		// Above Part is Extended from original source code
@@ -37097,10 +37249,18 @@ THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSeg
 				// Below Part Extended from original source code
 				var face = new THREE.Face3( a + offset, b + offset, d + offset );
 				face.materialIndex = materialIndex;
-				var c1 = !((materialIndex == 1 || materialIndex == 5 || materialIndex == 2 || materialIndex == 3 )&& i_th == 0 && j_th == 0);
-				var c2 = !((materialIndex == 0 || materialIndex == 5 || materialIndex == 2 || materialIndex == 3 )&& i_th == 2 && j_th == 0);
-				var c3 = !((materialIndex == 1 || materialIndex == 4 || materialIndex == 2 || materialIndex == 3 )&& i_th == 0 && j_th == 2);
-				var c4 = !((materialIndex == 0 || materialIndex == 4 || materialIndex == 2 || materialIndex == 3 )&& i_th == 2 && j_th == 2);
+				if (dimensions == 3){
+					var c1 = !((materialIndex == 1 || materialIndex == 5 || materialIndex == 2 || materialIndex == 3 )&& i_th == 0 && j_th == 0);
+					var c2 = !((materialIndex == 0 || materialIndex == 5 || materialIndex == 2 || materialIndex == 3 )&& i_th == 2 && j_th == 0);
+					var c3 = !((materialIndex == 1 || materialIndex == 4 || materialIndex == 2 || materialIndex == 3 )&& i_th == 0 && j_th == 2);
+					var c4 = !((materialIndex == 0 || materialIndex == 4 || materialIndex == 2 || materialIndex == 3 )&& i_th == 2 && j_th == 2);
+				}
+				else {
+					var c1 = !((materialIndex == 1 || materialIndex == 5 || materialIndex == 2 || materialIndex == 3 )&& i_th == 0 && j_th == 0);
+					var c2 = !((materialIndex == 0 || materialIndex == 5 || materialIndex == 2 || materialIndex == 3 )&& i_th == 3 && j_th == 0);
+					var c3 = !((materialIndex == 1 || materialIndex == 4 || materialIndex == 2 || materialIndex == 3 )&& i_th == 0 && j_th == 3);
+					var c4 = !((materialIndex == 0 || materialIndex == 4 || materialIndex == 2 || materialIndex == 3 )&& i_th == 3 && j_th == 3);
+				}
 				
 				if (c1 && c2 && c3 && c4)
 					scope.faces.push( face );
@@ -37111,141 +37271,313 @@ THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSeg
 				if (c1 && c2 && c3 && c4)
 					scope.faces.push( face );
 				if (materialIndex == 2 || materialIndex == 3){
-					if (i_th == 1 && j_th == 0){
-						var face = (materialIndex == 2) ? new THREE.Face3( a + offset, d + offset, c + offset + 1 ): new THREE.Face3( b + offset, c + offset + 1, c + offset);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-					}
-					else if (i_th == 1 && j_th == 2){
-						var face = (materialIndex == 2) ? new THREE.Face3( b + offset, c + offset + 1, c + offset ): new THREE.Face3( a + offset, d + offset, c + offset + 1);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-					}
-					else if (i_th == 2 && j_th == 1){
-						var face = new THREE.Face3( d + offset, c + offset, c + offset + 1);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-					}
-					else if (i_th == 0 && j_th == 1){
-						var face = new THREE.Face3( a + offset, c + offset + 1, b + offset);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-					}
-					else if (i_th == 0 && j_th == 0){
-						var face = new THREE.Face3( ((materialIndex == 2) ? b + offset : a + offset), c + offset, d + offset );
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-						if (materialIndex == 2){
-							var face = new THREE.Face3( b + offset, d + offset, c + offset + 1 );
-							face.materialIndex = 5;
-							scope.faces.push( face );
-							var face = new THREE.Face3( b + offset, c + offset + 1, c + offset + 2 );
-							face.materialIndex = 5;
+					if (dimensions == 3){
+						if (i_th == 1 && j_th == 0){
+							var face = (materialIndex == 2) ? new THREE.Face3( a + offset, d + offset, c + offset + 1 ): new THREE.Face3( b + offset, c + offset + 1, c + offset);
+							face.materialIndex = materialIndex;
 							scope.faces.push( face );
 						}
-					}
-					else if (i_th == 0 && j_th == 2){
-						var face = new THREE.Face3( ((materialIndex == 2) ? a + offset : b + offset), c + offset, d + offset );
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-						if (materialIndex == 2){
-							var face = new THREE.Face3( a + offset, c + offset + 1, c + offset);
-							face.materialIndex = 1;
-							scope.faces.push( face );
-							var face = new THREE.Face3( c + offset, c + offset + 1, c + offset + 2 );
-							face.materialIndex = 1;
+						else if (i_th == 1 && j_th == 2){
+							var face = (materialIndex == 2) ? new THREE.Face3( b + offset, c + offset + 1, c + offset ): new THREE.Face3( a + offset, d + offset, c + offset + 1);
+							face.materialIndex = materialIndex;
 							scope.faces.push( face );
 						}
-					}
-					else if (i_th == 2 && j_th == 0){
-						var face = new THREE.Face3( ((materialIndex == 2) ? c + offset : d + offset), a + offset, b + offset );
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-						if (materialIndex == 2){
-							var face = new THREE.Face3( a + offset, c + offset, c + offset + 1);
-							face.materialIndex = 0;
-							scope.faces.push( face );
-							var face = new THREE.Face3( c + offset, c + offset + 2, c + offset + 1 );
-							face.materialIndex = 0;
+						else if (i_th == 2 && j_th == 1){
+							var face = new THREE.Face3( d + offset, c + offset, c + offset + 1);
+							face.materialIndex = materialIndex;
 							scope.faces.push( face );
 						}
+						else if (i_th == 0 && j_th == 1){
+							var face = new THREE.Face3( a + offset, c + offset + 1, b + offset);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+						}
+						else if (i_th == 0 && j_th == 0){
+							var face = new THREE.Face3( ((materialIndex == 2) ? b + offset : a + offset), c + offset, d + offset );
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							if (materialIndex == 2){
+								var face = new THREE.Face3( b + offset, d + offset, c + offset + 1 );
+								face.materialIndex = 5;
+								scope.faces.push( face );
+								var face = new THREE.Face3( b + offset, c + offset + 1, c + offset + 2 );
+								face.materialIndex = 5;
+								scope.faces.push( face );
+							}
+						}
+						else if (i_th == 0 && j_th == 2){
+							var face = new THREE.Face3( ((materialIndex == 2) ? a + offset : b + offset), c + offset, d + offset );
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							if (materialIndex == 2){
+								var face = new THREE.Face3( a + offset, c + offset + 1, c + offset);
+								face.materialIndex = 1;
+								scope.faces.push( face );
+								var face = new THREE.Face3( c + offset, c + offset + 1, c + offset + 2 );
+								face.materialIndex = 1;
+								scope.faces.push( face );
+							}
+						}
+						else if (i_th == 2 && j_th == 0){
+							var face = new THREE.Face3( ((materialIndex == 2) ? c + offset : d + offset), a + offset, b + offset );
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							if (materialIndex == 2){
+								var face = new THREE.Face3( a + offset, c + offset, c + offset + 1);
+								face.materialIndex = 0;
+								scope.faces.push( face );
+								var face = new THREE.Face3( c + offset, c + offset + 2, c + offset + 1 );
+								face.materialIndex = 0;
+								scope.faces.push( face );
+							}
+						}
+						else if (i_th == 2 && j_th == 2){
+							var face = new THREE.Face3( ((materialIndex == 2) ? d + offset : c + offset), a + offset, b + offset );
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							if (materialIndex == 2){
+								var face = new THREE.Face3( b + offset, c + offset + 1, d + offset );
+								face.materialIndex = 4;
+								scope.faces.push( face );
+								var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1 );
+								face.materialIndex = 4;
+								scope.faces.push( face );
+							}
+						}
 					}
-					else if (i_th == 2 && j_th == 2){
-						var face = new THREE.Face3( ((materialIndex == 2) ? d + offset : c + offset), a + offset, b + offset );
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-						if (materialIndex == 2){
-							var face = new THREE.Face3( b + offset, c + offset + 1, d + offset );
-							face.materialIndex = 4;
+					else {
+						if ((i_th == 1 || i_th == 2) && j_th == 0){
+							var face = (materialIndex == 2) ? new THREE.Face3( a + offset, d + offset, c + offset + 1 ): new THREE.Face3( b + offset, c + offset + 1, c + offset);
+							face.materialIndex = materialIndex;
 							scope.faces.push( face );
-							var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1 );
-							face.materialIndex = 4;
+						}
+						else if ((i_th == 1 || i_th == 2) && j_th == 3){
+							var face = (materialIndex == 2) ? new THREE.Face3( b + offset, c + offset + 1, c + offset ): new THREE.Face3( a + offset, d + offset, c + offset + 1);
+							face.materialIndex = materialIndex;
 							scope.faces.push( face );
+						}
+						else if (i_th == 3 && (j_th == 1 || j_th == 2)){
+							var face = new THREE.Face3( d + offset, c + offset, c + offset + 1);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+						}
+						else if (i_th == 0 && (j_th == 1 || j_th == 2)){
+							var face = new THREE.Face3( a + offset, c + offset + 1, b + offset);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+						}
+						else if (i_th == 0 && j_th == 0){
+							var face = new THREE.Face3( ((materialIndex == 2) ? b + offset : a + offset), c + offset, d + offset );
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							if (materialIndex == 2){
+								var face = new THREE.Face3( b + offset, d + offset, c + offset + 1 );
+								face.materialIndex = 5;
+								scope.faces.push( face );
+								var face = new THREE.Face3( b + offset, c + offset + 1, c + offset + 2 );
+								face.materialIndex = 5;
+								scope.faces.push( face );
+							}
+						}
+						else if (i_th == 0 && j_th == 3){
+							var face = new THREE.Face3( ((materialIndex == 2) ? a + offset : b + offset), c + offset, d + offset );
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							if (materialIndex == 2){
+								var face = new THREE.Face3( a + offset, c + offset + 1, c + offset);
+								face.materialIndex = 1;
+								scope.faces.push( face );
+								var face = new THREE.Face3( c + offset, c + offset + 1, c + offset + 2 );
+								face.materialIndex = 1;
+								scope.faces.push( face );
+							}
+						}
+						else if (i_th == 3 && j_th == 0){
+							var face = new THREE.Face3( ((materialIndex == 2) ? c + offset : d + offset), a + offset, b + offset );
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							if (materialIndex == 2){
+								var face = new THREE.Face3( a + offset, c + offset, c + offset + 1);
+								face.materialIndex = 0;
+								scope.faces.push( face );
+								var face = new THREE.Face3( c + offset, c + offset + 2, c + offset + 1 );
+								face.materialIndex = 0;
+								scope.faces.push( face );
+							}
+						}
+						else if (i_th == 3 && j_th == 3){
+							var face = new THREE.Face3( ((materialIndex == 2) ? d + offset : c + offset), a + offset, b + offset );
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							if (materialIndex == 2){
+								var face = new THREE.Face3( b + offset, c + offset + 1, d + offset );
+								face.materialIndex = 4;
+								scope.faces.push( face );
+								var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1 );
+								face.materialIndex = 4;
+								scope.faces.push( face );
+							}
 						}
 					}
 				}
 				if (materialIndex == 5){
-					if (i_th == 1 && j_th == 0){
-						var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
-						face.materialIndex = 0;
-						scope.faces.push( face );
-						var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
-						face.materialIndex = 0;
-						scope.faces.push( face );
-						var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-						var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );		
+					if (dimensions == 3){
+						if (i_th == 1 && j_th == 0){
+							var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
+							face.materialIndex = 0;
+							scope.faces.push( face );
+							var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
+							face.materialIndex = 0;
+							scope.faces.push( face );
+							var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );		
+						}
+					}
+					else {
+						if ((i_th == 1 || i_th == 2) && j_th == 0){
+							var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
+							face.materialIndex = 0;
+							scope.faces.push( face );
+							var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
+							face.materialIndex = 0;
+							scope.faces.push( face );
+							var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
+							if (i_th == 1)
+								face.materialIndex = materialIndex;
+							else
+								face.materialIndex = 1;
+							scope.faces.push( face );
+							var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
+							if (i_th == 1)
+								face.materialIndex = materialIndex;
+							else
+								face.materialIndex = 1;
+							scope.faces.push( face );		
+						}
 					}
 				}
 				if (materialIndex == 4){
-					if (i_th == 1 && j_th == 2){
-						var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
-						face.materialIndex = 1;
-						scope.faces.push( face );
-						var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
-						face.materialIndex = 1;
-						scope.faces.push( face );
-						var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-						var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );		
+					if (dimensions == 3){
+						if (i_th == 1 && j_th == 2){
+							var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
+							face.materialIndex = 1;
+							scope.faces.push( face );
+							var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
+							face.materialIndex = 1;
+							scope.faces.push( face );
+							var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );		
+						}
+					}
+					else {
+						if ((i_th == 1 || i_th == 2) && j_th == 3){
+							var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
+							face.materialIndex = 1;
+							scope.faces.push( face );
+							var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
+							face.materialIndex = 1;
+							scope.faces.push( face );
+							var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
+							if (i_th == 1)
+								face.materialIndex = 0;
+							else
+								face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
+							if (i_th == 1)
+								face.materialIndex = 0;
+							else
+								face.materialIndex = materialIndex;
+							scope.faces.push( face );		
+						}
 					}
 				}
 				if (materialIndex == 1){
-					if (i_th == 0 && j_th == 1){
-						var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
-						face.materialIndex = 5;
-						scope.faces.push( face );
-						var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
-						face.materialIndex = 5;
-						scope.faces.push( face );
-						var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-						var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );		
+					if (dimensions == 3){
+						if (i_th == 0 && j_th == 1){
+							var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
+							face.materialIndex = 5;
+							scope.faces.push( face );
+							var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
+							face.materialIndex = 5;
+							scope.faces.push( face );
+							var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );		
+						}
+					}
+					else {
+						if (i_th == 0 && (j_th == 1 || j_th == 2)){
+							var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
+							face.materialIndex = 5;
+							scope.faces.push( face );
+							var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
+							face.materialIndex = 5;
+							scope.faces.push( face );
+							var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
+							if (j_th == 1)
+								face.materialIndex = 4;
+							else
+								face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
+							if (j_th == 1)
+								face.materialIndex = 4;
+							else
+								face.materialIndex = materialIndex;
+							scope.faces.push( face );		
+						}
 					}
 				}
 				if (materialIndex == 0){
-					if (i_th == 2 && j_th == 1){
-						var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
-						face.materialIndex = 4;
-						scope.faces.push( face );
-						var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
-						face.materialIndex = 4;
-						scope.faces.push( face );
-						var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );
-						var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
-						face.materialIndex = materialIndex;
-						scope.faces.push( face );		
+					if (dimensions == 3){
+						if (i_th == 2 && j_th == 1){
+							var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
+							face.materialIndex = 4;
+							scope.faces.push( face );
+							var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
+							face.materialIndex = 4;
+							scope.faces.push( face );
+							var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );
+							var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
+							face.materialIndex = materialIndex;
+							scope.faces.push( face );		
+						}
+					}
+					else {
+						if (i_th == 3 && (j_th == 1 || j_th == 2)){
+							var face = new THREE.Face3( a + offset, b + offset, c + offset + 1);
+							face.materialIndex = 4;
+							scope.faces.push( face );
+							var face = new THREE.Face3( b + offset, c + offset + 2, c + offset + 1);
+							face.materialIndex = 4;
+							scope.faces.push( face );
+							var face = new THREE.Face3( d + offset, c + offset + 1, c + offset + 2);
+							if (j_th == 1)
+								face.materialIndex = materialIndex;
+							else
+								face.materialIndex = 5;
+							scope.faces.push( face );
+							var face = new THREE.Face3( c + offset, d + offset , c + offset + 2);
+							if (j_th == 1)
+								face.materialIndex = materialIndex;
+							else
+								face.materialIndex = 5;
+							scope.faces.push( face );		
+						}
 					}
 				}
 				// Above Part Extended from original source code
@@ -37260,4 +37592,4 @@ THREE.FisherCubeGeometry = function ( width, height, depth, i_th, j_th, widthSeg
 
 };
 
-THREE.FisherCubeGeometry.prototype = Object.create( THREE.Geometry.prototype );
+THREE.FisherCubeGeomerty.prototype = Object.create( THREE.Geometry.prototype );

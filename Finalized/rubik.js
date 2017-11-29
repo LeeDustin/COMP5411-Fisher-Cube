@@ -202,10 +202,10 @@ function Fisher(element, dimensions, background) {
       maxExtent = (cubeSize * dimensions + spacing * (dimensions - 1)) / 2, 
       allCubes = [];
 
-  function newFisherCube(x, y, z, i, k) {
-    // In original implemenation, It is called CubeGeometry. Now I extend the THREE Library throughout creating new kinds of geometry.
-	// Called FisherCubeGeometry, Vertex and Fragment Shading detailed implementation inside constrctor of FisherCubeGeometry.
-    var cubeGeometry = new THREE.FisherCubeGeometry(cubeSize, cubeSize, cubeSize, i, k);
+  function newFisherCube(x, y, z, i, k, dimensions) {
+    // In original implemenation, It is called CubeGeomerty. Now I extend the THREE Library throughout creating new kinds of geometry.
+	// Called FisherCubeGeomerty, Vertex and Fragment Shading detailed implementation inside constrctor of FisherCubeGeomerty.
+    var cubeGeometry = new THREE.FisherCubeGeomerty(cubeSize, cubeSize, cubeSize, i, k, dimensions);
     var cube = new THREE.Mesh(cubeGeometry, cubeMaterials);
     cube.castShadow = true;
 
@@ -237,7 +237,7 @@ function Fisher(element, dimensions, background) {
             y = (j - positionOffset) * increment,
             z = (k - positionOffset) * increment;
 		// Modified function call
-        newFisherCube(x, y, z, i , k);
+        newFisherCube(x, y, z, i , k, dimensions);
       }
     }
   }
